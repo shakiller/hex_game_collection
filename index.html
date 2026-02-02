@@ -168,6 +168,42 @@
     --hex-fill-hover-end: #a855f7;
   }
 
+  /* Эффект блика */
+  .hex-glimmer {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hex-glimmer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.4) 30%,
+      rgba(255, 255, 255, 0.6) 50%,
+      rgba(255, 255, 255, 0.4) 70%,
+      transparent 100%
+    );
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+    animation: glimmer-sweep 1.2s ease-in-out;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  @keyframes glimmer-sweep {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+
   footer {
     margin-top: 20px;
     font-size: 12px;
@@ -220,6 +256,53 @@
 </div>
 
 <footer>© 2025 HexVerse</footer>
+
+<script>
+  // Функция для добавления эффекта блика на случайную кнопку
+  function addGlimmerEffect() {
+    // Получаем все hex-кнопки
+    const hexButtons = document.querySelectorAll('.hex');
+    
+    if (hexButtons.length === 0) return;
+    
+    // Убираем предыдущий эффект блика со всех кнопок
+    hexButtons.forEach(hex => {
+      hex.classList.remove('hex-glimmer');
+    });
+    
+    // Выбираем случайную кнопку
+    const randomIndex = Math.floor(Math.random() * hexButtons.length);
+    const randomHex = hexButtons[randomIndex];
+    
+    // Добавляем класс для эффекта блика
+    randomHex.classList.add('hex-glimmer');
+    
+    // Убираем класс после завершения анимации
+    setTimeout(() => {
+      randomHex.classList.remove('hex-glimmer');
+    }, 1200); // Длительность анимации
+  }
+  
+  // Запускаем эффект блика каждые 3-5 секунд
+  function startGlimmerLoop() {
+    // Первый блик через 2 секунды после загрузки
+    setTimeout(() => {
+      addGlimmerEffect();
+      
+      // Затем повторяем каждые 3-5 секунд (случайный интервал)
+      setInterval(() => {
+        addGlimmerEffect();
+      }, 3000 + Math.random() * 2000); // От 3 до 5 секунд
+    }, 2000);
+  }
+  
+  // Запускаем цикл бликов после загрузки страницы
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', startGlimmerLoop);
+  } else {
+    startGlimmerLoop();
+  }
+</script>
 
 </body>
 </html>
